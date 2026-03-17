@@ -1,5 +1,6 @@
 plugins {
-    id("org.jetbrains.kotlin.plugin.compose")
+    id("com.android.application")
+    id("org.jetbrains.kotlin.plugin.compose") // Compose 插件保留（和 Android 插件不冲突）
 }
 
 android {
@@ -14,9 +15,34 @@ android {
         versionName = "1.14.514codex"
     }
 
+    // Kotlin DSL 正确的签名配置
+    signingConfigs {
+        create("release") {
+            val properties = java.util.Properties()
+            try {
+                properties.load(rootProject.file("local.properties").inputStream())
+                // 读取签名配置，空值兜底避免编译失败
+                storeFile = file(properties.getProperty("storeFile") ?: "")
+                storePassword = properties.getProperty("storePassword")
+                keyAlias = properties.getProperty("keyAlias")
+                keyPassword = properties.getProperty("keyPassword")
+            } catch (e: Exception) {
+                println("签名配置读取失败（非关键错误）: ${e.message}")
+            }
+        }
+    }
+
     buildTypes {
         release {
+            // 关联签名配置
+            signingConfig = signingConfigs.getByName("release")
+            // Kotlin DSL 正确写法（isMinifyEnabled 替代 minifyEnabled）
             isMinifyEnabled = false
+            // 括号+双引号，适配 Kotlin 语法
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 
@@ -32,25 +58,6 @@ android {
     buildFeatures {
         compose = true
     }
-    
-    signingConfigs {
-    release {
-        Properties properties = new Properties()
-        properties.load(project.rootProject.file('local.properties').newDataInputStream())
-        storeFile file(properties['storeFile'])
-        storePassword properties['storePassword']
-        keyAlias properties['keyAlias']
-        keyPassword properties['keyPassword']
-    }
-}
-
-buildTypes {
-    release {
-        signingConfig signingConfigs.release
-        minifyEnabled false
-        proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-    }
-}
 }
 
 dependencies {
@@ -75,4 +82,3 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
 }
-
