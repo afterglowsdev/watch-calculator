@@ -5,15 +5,15 @@ plugins {
 }
 
 android {
-    namespace = "com.calculator.md3watch"
+    namespace = "codex.calculator"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.calculator.md3watch"
+        applicationId = "codex.calculator"
         minSdk = 26
         targetSdk = 36
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.14.514codex"
     }
 
     buildTypes {
@@ -34,6 +34,25 @@ android {
     buildFeatures {
         compose = true
     }
+    
+    signingConfigs {
+    release {
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file('local.properties').newDataInputStream())
+        storeFile file(properties['storeFile'])
+        storePassword properties['storePassword']
+        keyAlias properties['keyAlias']
+        keyPassword properties['keyPassword']
+    }
+}
+
+buildTypes {
+    release {
+        signingConfig signingConfigs.release
+        minifyEnabled false
+        proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+    }
+}
 }
 
 dependencies {
