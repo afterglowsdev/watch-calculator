@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
-import androidx.compose.foundation.layout.weight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -151,6 +150,7 @@ private fun CalculatorApp() {
                     KeyRow(
                         keys = row,
                         gap = buttonGap,
+                        modifier = Modifier.weight(1f),
                         onKeyPress = { key -> state = handleKeyPress(state, key) },
                     )
                 }
@@ -251,12 +251,11 @@ private fun DisplayPanel(
 private fun KeyRow(
     keys: List<CalculatorKeyModel>,
     gap: androidx.compose.ui.unit.Dp,
+    modifier: Modifier = Modifier,
     onKeyPress: (CalculatorKeyModel) -> Unit,
 ) {
     Row(
-        modifier = Modifier
-            .weight(1f)
-            .fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(gap),
     ) {
         keys.forEach { key ->
