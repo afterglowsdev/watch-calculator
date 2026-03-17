@@ -52,15 +52,15 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-private const val ErrorText = "错误"
+private const val ErrorText = "\u9519\u8BEF"
 private const val MaxInputLength = 14
 private val DecimalMathContext = MathContext(12, RoundingMode.HALF_UP)
 
 private enum class CalcOperator(val symbol: String) {
     Add("+"),
-    Subtract("−"),
-    Multiply("×"),
-    Divide("÷"),
+    Subtract("\u2212"),
+    Multiply("\u00D7"),
+    Divide("\u00F7"),
 }
 
 private data class CalculatorState(
@@ -95,21 +95,21 @@ private fun CalculatorApp() {
     val rows = listOf(
         listOf(
             CalculatorKeyModel.Action("AC", ActionKind.Clear),
-            CalculatorKeyModel.Action("±", ActionKind.ToggleSign),
+            CalculatorKeyModel.Action("\u00B1", ActionKind.ToggleSign),
             CalculatorKeyModel.Action("%", ActionKind.Percent),
-            CalculatorKeyModel.Action("÷", ActionKind.Divide),
+            CalculatorKeyModel.Action("\u00F7", ActionKind.Divide),
         ),
         listOf(
             CalculatorKeyModel.Digit("7"),
             CalculatorKeyModel.Digit("8"),
             CalculatorKeyModel.Digit("9"),
-            CalculatorKeyModel.Action("×", ActionKind.Multiply),
+            CalculatorKeyModel.Action("\u00D7", ActionKind.Multiply),
         ),
         listOf(
             CalculatorKeyModel.Digit("4"),
             CalculatorKeyModel.Digit("5"),
             CalculatorKeyModel.Digit("6"),
-            CalculatorKeyModel.Action("−", ActionKind.Subtract),
+            CalculatorKeyModel.Action("\u2212", ActionKind.Subtract),
         ),
         listOf(
             CalculatorKeyModel.Digit("1"),
@@ -175,13 +175,13 @@ private fun CalculatorApp() {
                         state = handleKeyPress(state, CalculatorKeyModel.Digit("."))
                     }
                     CalculatorButton(
-                        label = "√",
+                        label = "\u221A",
                         modifier = Modifier.weight(1f),
                         style = ButtonStyle.Operator,
                     ) {
                         state = handleKeyPress(
                             state,
-                            CalculatorKeyModel.Action("√", ActionKind.Sqrt),
+                            CalculatorKeyModel.Action("\u221A", ActionKind.Sqrt),
                         )
                     }
                     CalculatorButton(
@@ -452,13 +452,13 @@ private fun percent(state: CalculatorState): CalculatorState {
 private fun sqrtValue(state: CalculatorState): CalculatorState {
     val value = state.currentInput.toBigDecimalOrNull() ?: return CalculatorState(currentInput = ErrorText)
     if (value < BigDecimal.ZERO) {
-        return state.copy(currentInput = ErrorText, history = "√(${state.currentInput})")
+        return state.copy(currentInput = ErrorText, history = "\u221A(${state.currentInput})")
     }
 
     val result = BigDecimal.valueOf(sqrt(value.toDouble())).normalized()
     return state.copy(
         currentInput = result,
-        history = "√(${state.currentInput})",
+        history = "\u221A(${state.currentInput})",
         waitingForNext = true,
     )
 }
