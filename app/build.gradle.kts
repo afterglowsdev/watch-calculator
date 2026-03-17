@@ -4,17 +4,6 @@ plugins {
 }
 
 android {
-    val signingStoreFile = System.getenv("KEYSTORE_BASE64")
-    val signingStorePassword = System.getenv("KEYSTORE_PASSWORD")
-    val signingKeyAlias = System.getenv("KEY_ALIAS")
-    val signingKeyPassword = System.getenv("KEY_PASSWORD")
-    val signingReady = listOf(
-        signingStoreFile,
-        signingStorePassword,
-        signingKeyAlias,
-        signingKeyPassword,
-    ).all { !it.isNullOrBlank() }
-
     namespace = "com.calculator.md3watch"
     compileSdk = 34
 
@@ -28,9 +17,6 @@ android {
 
     buildTypes {
         release {
-            if (signingReady) {
-                signingConfig = signingConfigs.getByName("release")
-            }
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -54,17 +40,6 @@ android {
 
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.14"
-    }
-
-    signingConfigs {
-        create("release") {
-            if (signingReady) {
-                storeFile = file(signingStoreFile!!)
-                storePassword = signingStorePassword
-                keyAlias = signingKeyAlias
-                keyPassword = signingKeyPassword
-            }
-        }
     }
 }
 
