@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
-    id("org.jetbrains.kotlin.plugin.compose") // Compose 插件保留（和 Android 插件不冲突）
+    id("org.jetbrains.kotlin.android") // 补回 Kotlin Android 插件（适配部分环境兼容）
+    id("org.jetbrains.kotlin.plugin.compose")
 }
 
 android {
@@ -15,30 +16,29 @@ android {
         versionName = "1.14.514codex"
     }
 
-    // Kotlin DSL 正确的签名配置
     signingConfigs {
         create("release") {
+            // 修复 java.util 引用问题：直接导入 Properties 类
             val properties = java.util.Properties()
             try {
-                properties.load(rootProject.file("local.properties").inputStream())
-                // 读取签名配置，空值兜底避免编译失败
-                storeFile = file(properties.getProperty("storeFile") ?: "")
-                storePassword = properties.getProperty("storePassword")
-                keyAlias = properties.getProperty("keyAlias")
-                keyPassword = properties.getProperty("keyPassword")
+                val localPropertiesFile = rootProject.file("local.properties")
+                if (localPropertiesFile.exists()) {
+                    properties.load(localPropertiesFile.inputStream())
+                    storeFile = file(properties.getProperty("storeFile", ""))
+                    storePassword = properties.getProperty("storePassword", "")
+                    keyAlias = properties.getProperty("keyAlias", "")
+                    keyPassword = properties.getProperty("keyPassword", "")
+                }
             } catch (e: Exception) {
-                println("签名配置读取失败（非关键错误）: ${e.message}")
+                println("签名配置读取失败（不影响编译）: ${e.message}")
             }
         }
     }
 
     buildTypes {
         release {
-            // 关联签名配置
             signingConfig = signingConfigs.getByName("release")
-            // Kotlin DSL 正确写法（isMinifyEnabled 替代 minifyEnabled）
             isMinifyEnabled = false
-            // 括号+双引号，适配 Kotlin 语法
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -51,8 +51,9 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlinOptions {
-        jvmTarget = "17"
+    // 修复 kotlinOptions 归属问题：放在 android 块内，且补全 Kotlin 插件依赖
+    kotlin {
+        jvmToolchain(17)
     }
 
     buildFeatures {
