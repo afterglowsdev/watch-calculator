@@ -1,6 +1,5 @@
 plugins {
     id("com.android.application")
-    id("org.jetbrains.kotlin.android") // 补回 Kotlin Android 插件（适配部分环境兼容）
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
