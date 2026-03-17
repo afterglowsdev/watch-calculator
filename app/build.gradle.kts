@@ -4,10 +4,10 @@ plugins {
 }
 
 android {
-    val signingStoreFile = System.getenv("SIGNING_STORE_FILE")
-    val signingStorePassword = System.getenv("SIGNING_STORE_PASSWORD")
-    val signingKeyAlias = System.getenv("SIGNING_KEY_ALIAS")
-    val signingKeyPassword = System.getenv("SIGNING_KEY_PASSWORD")
+    val signingStoreFile = System.getenv("KEYSTORE_BASE64")
+    val signingStorePassword = System.getenv("KEYSTORE_PASSWORD")
+    val signingKeyAlias = System.getenv("KEY_ALIAS")
+    val signingKeyPassword = System.getenv("KEY_PASSWORD")
     val signingReady = listOf(
         signingStoreFile,
         signingStorePassword,
